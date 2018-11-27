@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+					    http://www.springframework.org/schema/beans/spring-beans.xsd
+					    http://www.springframework.org/schema/tx
+					    http://www.springframework.org/schema/tx/spring-tx.xsd
+					    http://www.springframework.org/schema/aop
+					    http://www.springframework.org/schema/aop/spring-aop.xsd
+					    http://www.springframework.org/schema/context
+					    http://www.springframework.org/schema/context/spring-context.xsd">
+  
+  
+    <!-- 
+    
+        加载本文件的数据原信息以后，再容器中进行原始的方法操作数据库，是封装好的数据操作
+        1-进行原始的数据库操作jdbc，dbcp
+        2-原始的mybatis操作
+        3-dao层是class的操作，而不是interface
+        
+     -->
+ 
+
+ 
+ 
+
+
+    <!-- 扫描这个包下的内容 -->
+   <context:component-scan base-package="com.regist">
+   <!-- controller不进行扫描 -->
+   <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+   </context:component-scan>
+   
+   
+   <!-- 数据库连接线 -->
+     <!--bean.xml文件接管sqlmapconfig.xml 文件  -->
+   <!-- 把数据元接管 ,,使用spring'内部自带的数据源-->
+     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+       <property name="driverClassName" value="${jdbc.driver}"></property>
+       <property name="url" value="${jdbc.url}"></property>
+       <property name="username" value="${jdbc.username}"></property>
+       <property name="password" value="${jdbc.password}"></property>
+     
+     
+     </bean>
+  <!-- 数据源管理器 -->
+   <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+      <property name="dataSource" ref="dataSource"></property>
+   
+   </bean>
+      <!-- 加载properties文件 -->                        
+      <context:property-placeholder location="classpath:env.properties"/>
+   
+   <!-- 
+     sqlSessionFactoryBean执行sql语句
+   
+   
+    -->
+     <!-- 即spring不支持接口的字节码，，所以用另一个实体类进行替换 -->
+    <bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+      <!-- 制定一个数据源 -->
+      <property name="dataSource" ref="dataSource"></property>
+    </bean>
+   
+   <!-- mapperscan时扫描占位符的 -->
+      <bean id="mapperScnner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        
+          <property name="basePackage" value="com.regist.dao"></property>
+      
+      </bean>
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+
+</beans>
